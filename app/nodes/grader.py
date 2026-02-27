@@ -1,5 +1,5 @@
 from app.models import GraphState
-from app.services.llm import gemini_client
+from app.services.llm import groq_client
 
 
 async def grader_node(state: GraphState) -> GraphState:
@@ -20,7 +20,7 @@ async def grader_node(state: GraphState) -> GraphState:
     Respond with only 'yes' or 'no'.
     """
 
-    response = await gemini_client.generate_async(grading_prompt, temperature=0.1)
+    response = await groq_client.generate_async(grading_prompt, temperature=0.1)
 
     is_relevant = "yes" in response.lower()
     state["relevance_score"] = 1.0 if is_relevant else 0.0

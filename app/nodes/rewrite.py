@@ -1,5 +1,5 @@
 from app.models import GraphState
-from app.services.llm import gemini_client
+from app.services.llm import groq_client
 
 
 async def rewrite_query_node(state: GraphState) -> GraphState:
@@ -14,7 +14,7 @@ async def rewrite_query_node(state: GraphState) -> GraphState:
     Return only the rewritten query.
     """
 
-    rewritten_query = await gemini_client.generate_async(rewrite_prompt, temperature=0.3)
+    rewritten_query = await groq_client.generate_async(rewrite_prompt, temperature=0.3)
 
     state["query"] = rewritten_query.strip()
     state["retry_count"] = state.get("retry_count", 0) + 1

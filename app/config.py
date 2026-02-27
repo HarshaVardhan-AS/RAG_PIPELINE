@@ -2,7 +2,9 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    google_api_key: str
+    groq_api_key: str
+    # Keep google_api_key for embeddings only (if needed)
+    google_api_key: str = ""
 
     qdrant_url: str
     qdrant_api_key: str

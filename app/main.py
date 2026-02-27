@@ -31,7 +31,7 @@ class QueryResponse(BaseModel):
 
 @app.get("/")
 async def root():
-    return {"message": "Agentic RAG Pipeline - Hackathon Template"}
+    return {"message": "HR Policy Assistant - AI-powered company policy and HR guidance"}
 
 @app.post("/query")
 async def process_query(request: QueryRequest):
@@ -51,7 +51,7 @@ async def process_query(request: QueryRequest):
 
         final_state = await graph.ainvoke(initial_state)
 
-        # The answer coming back is ALREADY in the target language natively from Gemini
+        # The answer coming back is ALREADY in the target language natively from Groq
         answer = final_state.get("final_answer", "No answer generated")
 
         # 🔥 OPTIMIZATION 2: Pass the natively translated answer straight to TTS

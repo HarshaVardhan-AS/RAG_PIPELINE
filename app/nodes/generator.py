@@ -1,5 +1,5 @@
 from app.models import GraphState
-from app.services.llm import gemini_client
+from app.services.llm import groq_client
 
 
 async def generator_node(state: GraphState) -> GraphState:
@@ -7,41 +7,54 @@ async def generator_node(state: GraphState) -> GraphState:
     query = state["query"]
     documents = state["retrieved_documents"]
 
-    # 👈 OPTIMIZATION: Pull the target language from the state
-    target_language = state.get("language", "en")
+    LANG_MAP = {
+        "en": "English",
+        "te": "Telugu",
+        "hi": "Hindi",
+        "ta": "Tamil"
+    }
+
+    target_language = LANG_MAP.get(state.get("language", "en"), "English")
 
     context = "\n\n".join([
         f"Document {i + 1}: {doc.get('content', '')}"
         for i, doc in enumerate(documents[:3])
     ])
 
-    # 👈 Swapped the medical jargon for HR policy rules and added the translation instruction
+    # HR and Company Policy focused prompt
     generation_prompt = f"""
-    You are a helpful HR and Company Policy training assistant.
+You are a helpful HR and Company Policy assistant.
 
-    Using ONLY the provided context, answer the employee's question clearly.
+Your role is to help employees understand company policies, procedures, benefits, and workplace guidelines.
 
-    CRITICAL INSTRUCTION: You MUST output your final answer entirely and fluently in the language corresponding to this language code: {target_language}. Do not use English unless the code is 'en'.
+Answer using ONLY the provided context below.
 
-    Rules:
-    - Do NOT summarize excessively
-    - Do NOT merge different policies into one line
-    - Explain each relevant rule or policy separately
-    - Preserve all important information from the context
-    - Use simple sentences (strictly NO markdown or asterisks, plain text only for text-to-speech)
+Rules:
+- Use simple, clear sentences
+- No markdown formatting
+- Plain text only (for text-to-speech)
+- Be professional and helpful
+- If the context doesn't contain the answer, say so politely
+- Keep the answer concise and focused
+- Maximum 5–6 sentences OR numbered points
+- Include only the most relevant policy conditions
+- Do NOT repeat unnecessary background text
+- Use simple language for workers
+- Output in the requested language
+- Plain text only (no markdown symbols)
 
-    Format your response cleanly. 
-    If multiple rules apply, list them clearly in plain text.
+Language: Respond entirely in {target_language}.
 
-    Context:
-    {context}
+Context:
+{context}
 
-    Question: {query}
+Employee Question:
+{query}
 
-    Answer (in {target_language}):
+Your Answer (in {target_language}):
     """
 
-    answer = await gemini_client.generate_async(generation_prompt)
+    answer = await groq_client.generate_async(generation_prompt)
 
     state["final_answer"] = answer
     print(f"✨ Generated answer in {target_language}")

@@ -16,12 +16,12 @@ def load_pdf_text(path: str) -> str:
     return text
 
 
-def chunk_text_by_disease(text: str):
+def chunk_text_by_policy(text: str):
     """
-    Split PDF into chunks using 'Disease:' sections.
-    Ideal for medical datasets.
+    Split PDF into chunks using 'Policy:' sections.
+    Ideal for HR and company policy documents.
     """
-    sections = text.split("Disease:")
+    sections = text.split("Policy:")
     chunks = []
 
     for sec in sections:
@@ -29,7 +29,7 @@ def chunk_text_by_disease(text: str):
         if not sec:
             continue
 
-        chunk = "Disease: " + sec
+        chunk = "Policy: " + sec
         chunks.append(chunk)
 
     return chunks

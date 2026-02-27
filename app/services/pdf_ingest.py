@@ -17,22 +17,26 @@ def load_pdf_text(path: str):
     return text
 
 
-def chunk_text_by_disease(text: str):
-    sections = text.split("Disease:")
+def chunk_text_by_policy(text: str):
+    """
+    Split text into chunks based on 'Policy:' sections.
+    Ideal for HR and company policy documents.
+    """
+    sections = text.split("Policy:")
     chunks = []
 
     for sec in sections:
         sec = sec.strip()
         if not sec:
             continue
-        chunks.append("Disease: " + sec)
+        chunks.append("Policy: " + sec)
 
     return chunks
 
 
 def ingest_pdf(path: str):
     text = load_pdf_text(path)
-    chunks = chunk_text_by_disease(text)
+    chunks = chunk_text_by_policy(text)
 
     points = []
 
